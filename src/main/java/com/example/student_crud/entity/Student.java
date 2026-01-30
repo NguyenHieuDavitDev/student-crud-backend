@@ -1,24 +1,26 @@
 package com.example.student_crud.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 
-    @Entity
-    @Table(name = "students")
-    @Data
-    public class Student {
+@Entity
+@Table(name = "students")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Student {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        private String name;
-        private String email;
+    private String name;
+    private String email;
+    private String imageUrl;
 
-        private String imageUrl;
-
-        private boolean deleted = false;
-    }
+    private boolean deleted = false;
+}
 
 

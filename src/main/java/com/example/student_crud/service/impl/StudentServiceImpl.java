@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,14 +29,40 @@ public class StudentServiceImpl implements StudentService {
     private String uploadDir;
 
     private String saveImage(MultipartFile file) throws IOException {
-        if (file == null || file.isEmpty()) return null;
 
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path path = Paths.get(uploadDir, fileName);
-        Files.createDirectories(path.getParent());
-        Files.write(path, file.getBytes());
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        //  Chỉ cho phép image
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IOException("Only image files are allowed");
+        }
+
+        // Làm sạch tên file
+        String originalFilename = Paths.get(file.getOriginalFilename()).getFileName().toString();
+        String extension = "";
+
+        int dotIndex = originalFilename.lastIndexOf(".");
+        if (dotIndex > 0) {
+            extension = originalFilename.substring(dotIndex);
+        }
+
+        // Tạo tên file mới
+        String fileName = UUID.randomUUID() + extension;
+
+        //Tạo thư mục upload (relative path)
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Files.createDirectories(uploadPath);
+
+        // Ghi file
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
         return fileName;
     }
+
 
     private StudentResponse mapToResponse(Student s) {
         return new StudentResponse(
