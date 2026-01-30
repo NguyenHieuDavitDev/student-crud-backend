@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -29,39 +30,22 @@ public class StudentServiceImpl implements StudentService {
     private String uploadDir;
 
     private String saveImage(MultipartFile file) throws IOException {
-
         if (file == null || file.isEmpty()) {
             return null;
         }
 
-        //  Chỉ cho phép image
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new IOException("Only image files are allowed");
-        }
+        Files.createDirectories(Paths.get(uploadDir));
 
-        // Làm sạch tên file
-        String originalFilename = Paths.get(file.getOriginalFilename()).getFileName().toString();
-        String extension = "";
+        String filename = UUID.randomUUID() + "_" +
+                Objects.requireNonNull(file.getOriginalFilename())
+                        .replaceAll("\\s+", "_");
 
-        int dotIndex = originalFilename.lastIndexOf(".");
-        if (dotIndex > 0) {
-            extension = originalFilename.substring(dotIndex);
-        }
-
-        // Tạo tên file mới
-        String fileName = UUID.randomUUID() + extension;
-
-        //Tạo thư mục upload (relative path)
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        Files.createDirectories(uploadPath);
-
-        // Ghi file
-        Path filePath = uploadPath.resolve(fileName);
+        Path filePath = Paths.get(uploadDir).resolve(filename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return fileName;
+        return filename;
     }
+
 
 
     private StudentResponse mapToResponse(Student s) {
