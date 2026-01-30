@@ -1,7 +1,10 @@
 server:
-  port: ${SERVER_PORT}
+  port: ${PORT:8080}
 
 spring:
+  application:
+    name: student-crud
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -9,12 +12,18 @@ spring:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
   jpa:
+    open-in-view: false
     hibernate:
-      ddl-auto: ${DDL_AUTO}
-    show-sql: ${SHOW_SQL}
+      ddl-auto: update
+    show-sql: false
     properties:
       hibernate:
-        dialect: ${HIBERNATE_DIALECT}
+        dialect: org.hibernate.dialect.SQLServerDialect
+        format_sql: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger
 
 file:
-  upload-dir: ${UPLOAD_DIR}
+  upload-dir: ${UPLOAD_DIR:uploads}
