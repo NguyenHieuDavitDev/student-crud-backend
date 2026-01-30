@@ -1,0 +1,20 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO}
+    show-sql: ${SHOW_SQL}
+    properties:
+      hibernate:
+        dialect: ${HIBERNATE_DIALECT}
+
+file:
+  upload-dir: ${UPLOAD_DIR}
